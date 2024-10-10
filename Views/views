@@ -1,0 +1,133 @@
+1. 
+CREATE VIEW vw_alunos_cursos AS
+SELECT a.nome_aluno, d.nome_disciplina, c.nome_curso
+FROM alunos a
+JOIN matriculas m ON a.id_aluno = m.id_aluno
+JOIN disciplinas d ON m.id_disciplina = d.id_disciplina
+JOIN cursos c ON d.id_curso = c.id_curso;
+
+2.
+CREATE VIEW vw_total_alunos_disciplina AS
+SELECT d.nome_disciplina, COUNT(m.id_aluno) AS total_alunos
+FROM disciplinas d
+LEFT JOIN matriculas m ON d.id_disciplina = m.id_disciplina
+GROUP BY d.nome_disciplina;
+
+3. 
+CREATE VIEW vw_alunos_status_matriculas AS
+SELECT a.nome_aluno, d.nome_disciplina, m.status_matricula
+FROM alunos a
+JOIN matriculas m ON a.id_aluno = m.id_aluno
+JOIN disciplinas d ON m.id_disciplina = d.id_disciplina;
+
+4.
+CREATE VIEW vw_professores_turmas AS
+SELECT p.nome_professor, d.nome_disciplina, t.horario_turma
+FROM professores p
+JOIN turmas t ON p.id_professor = t.id_professor
+JOIN disciplinas d ON t.id_disciplina = d.id_disciplina;
+
+
+5.
+CREATE VIEW vw_alunos_maiores_20 AS
+SELECT nome_aluno, data_nascimento
+FROM alunos
+WHERE EXTRACT(YEAR FROM AGE(data_nascimento)) > 20;
+
+6.
+CREATE VIEW vw_carga_horaria_curso AS
+SELECT c.nome_curso, COUNT(d.id_disciplina) AS total_disciplinas, SUM(d.carga_horaria) AS carga_total
+FROM cursos c
+JOIN disciplinas d ON c.id_curso = d.id_curso
+GROUP BY c.nome_curso;
+
+7.
+CREATE VIEW vw_professores_especialidades AS
+SELECT nome_professor, especialidade
+FROM professores;
+
+8.
+CREATE VIEW vw_alunos_mais_uma_disciplina AS
+SELECT a.nome_aluno, COUNT(m.id_disciplina) AS total_disciplinas
+FROM alunos a
+JOIN matriculas m ON a.id_aluno = m.id_aluno
+GROUP BY a.nome_aluno
+HAVING COUNT(m.id_disciplina) > 1;
+
+9.
+CREATE VIEW vw_alunos_disciplinas_concluidas AS
+SELECT a.nome_aluno, COUNT(m.id_disciplina) AS disciplinas_concluidas
+FROM alunos a
+JOIN matriculas m ON a.id_aluno = m.id_aluno
+WHERE m.status_matricula = 'Concluído'
+GROUP BY a.nome_aluno;
+
+10.
+CREATE VIEW vw_turmas_semestre AS
+SELECT nome_disciplina, semestre
+FROM turmas
+WHERE semestre = '2024.1';
+
+11.
+CREATE VIEW vw_alunos_matriculas_trancadas AS
+SELECT nome_aluno
+FROM alunos a
+JOIN matriculas m ON a.id_aluno = m.id_aluno
+WHERE m.status_matricula = 'Trancado';
+
+12.
+CREATE VIEW vw_disciplinas_sem_alunos AS
+SELECT nome_disciplina
+FROM disciplinas d
+LEFT JOIN matriculas m ON d.id_disciplina = m.id_disciplina
+WHERE m.id_aluno IS NULL;
+
+13.
+CREATE VIEW vw_alunos_por_status AS
+SELECT status_matricula, COUNT(id_aluno) AS total_alunos
+FROM matriculas
+GROUP BY status_matricula;
+
+14.
+CREATE VIEW vw_professores_por_especialidade AS
+SELECT especialidade, COUNT(id_professor) AS total_professores
+FROM professores
+GROUP BY especialidade;
+
+15.
+CREATE VIEW vw_alunos_idades AS
+SELECT nome_aluno, EXTRACT(YEAR FROM AGE(data_nascimento)) AS idade
+FROM alunos;
+
+16.
+CREATE VIEW vw_ultimas_matriculas AS
+SELECT nome_aluno, MAX(data_matricula) AS ultima_matricula
+FROM alunos a
+JOIN matriculas m ON a.id_aluno = m.id_aluno
+GROUP BY nome_aluno;
+
+17.
+CREATE VIEW vw_disciplinas_curso_especifico AS
+SELECT nome_disciplina
+FROM disciplinas
+WHERE id_curso = (SELECT id_curso FROM cursos WHERE nome_curso = 'Engenharia de Software');
+
+18.
+CREATE VIEW vw_professores_sem_turmas AS
+SELECT nome_professor
+FROM professores p
+LEFT JOIN turmas t ON p.id_professor = t.id_professor
+WHERE t.id_turma IS NULL;
+
+19.
+CREATE VIEW vw_alunos_cpf_email AS
+SELECT nome_aluno, cpf, email
+FROM alunos;
+
+20.
+CREATE VIEW vw_disciplinas_por_professor AS
+SELECT p.nome_professor, COUNT(d.id_disciplina) AS total_disciplinas
+FROM professores p
+JOIN turmas t ON p.id_professor = t.id_professor
+JOIN disciplinas d ON t.id_disciplina = d.id_disciplina
+GROUP BY p.nome_professor;
